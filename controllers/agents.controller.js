@@ -82,14 +82,20 @@ export const createAgents = async (req, res) => {
 };
 
 
-export const agentCount =async (req, res) =>{
+export const agentCount = async (req, res) => {
+  const { userId } = req.query; // or use req.params if passed in the route
+
   try {
-    const totalAgents = await Agents.countDocuments();
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
+    const totalAgents = await Agents.countDocuments({ userId });
     res.status(200).json({ total: totalAgents });
   } catch (error) {
-    res.status(500).json({ message: "Error counting agents", error: error.message });
+    res.status(500).json({ message: 'Error counting agents', error: error.message });
   }
-}
+};
 
 
 
@@ -285,16 +291,22 @@ export const createAgentsContacts = async (req, res) => {
 
 
 export const getAgents = async (req, res) => {
-	try {
-		const agents = await Agents.find({}, 'name role title email') // Select specific fields
-			.limit(5)
-			.lean(); // Convert to plain JS objects for performance
+  const { userId } = req.query;
 
-		res.status(200).json({ agents });
-	} catch (error) {
-		console.error('Failed to fetch agents:', error);
-		res.status(500).json({ message: 'Server error while fetching agents' });
-	}
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
+    const agents = await Agents.find({ userId }, 'name role title email') // Filter + select fields
+      .limit(5)
+      .lean();
+
+    res.status(200).json({ agents });
+  } catch (error) {
+    console.error('Failed to fetch agents:', error);
+    res.status(500).json({ message: 'Server error while fetching agents', error: error.message });
+  }
 };
 
 export const getAllAgents = async (req, res) => {

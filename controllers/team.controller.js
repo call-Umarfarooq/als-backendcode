@@ -118,27 +118,42 @@ export const createTeam = async (req, res) => {
 };
 
 
-export const countTeam =async (req, res) =>{
+export const countTeam = async (req, res) => {
+    const { userId } = req.query;
+  
     try {
-      const totalTeams = await Teams.countDocuments();
+      if (!userId) {
+        return res.status(400).json({ message: 'userId is required' });
+      }
+  
+      const totalTeams = await Teams.countDocuments({ userId });
       res.status(200).json({ total: totalTeams });
     } catch (error) {
-      res.status(500).json({ message: "Error counting teams", error: error.message });
+      res.status(500).json({ message: 'Error counting teams', error: error.message });
     }
-  }
+  };
 
-  export const summary =async (req, res) =>{
-    try {
-      const teams = await Teams.find({},{
-        'basicInfo.name': 1,
-        'basicInfo.city': 1,
-        agents: 1
-      });
+  export const summary = async (req, res) => {
+    const { userId } = req.query;
   
-      const response = teams.map(team => ({
+    try {
+      if (!userId) {
+        return res.status(400).json({ error: 'userId is required' });
+      }
+  
+      const teams = await Teams.find(
+        { userId },
+        {
+          'basicInfo.name': 1,
+          'basicInfo.city': 1,
+          agents: 1,
+        }
+      );
+  
+      const response = teams.map((team) => ({
         name: team.basicInfo?.name || 'Unnamed Team',
         city: team.basicInfo?.city || 'Unknown City',
-        agentCount: team.agents.length
+        agentCount: team.agents.length,
       }));
   
       res.status(200).json(response);
@@ -146,7 +161,7 @@ export const countTeam =async (req, res) =>{
       console.error('Error fetching team summary:', err);
       res.status(500).json({ error: 'Server Error' });
     }
-  }
+  };
 // Get Team by ID
 export const getTeamById = async (req, res) => {
     try {

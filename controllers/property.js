@@ -68,21 +68,24 @@ export const createPropertyAddress = async (req, res) => {
 
 
 export const getSixPropertiesWithImages = async (req, res) => {
+  const { userId } = req.query;
+
   try {
-    const properties = await Property.find()
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'userId is required' });
+    }
+
+    const properties = await Property.find({ userId })
       .sort({ createdAt: -1 }) // latest first
       .limit(6)
-      .lean(); // optional: returns plain JS objects
+      .lean();
 
-    // Get all property IDs
     const propertyIds = properties.map((property) => property._id);
 
-    // Get corresponding images
     const images = await PropertyImage.find({
       propertyId: { $in: propertyIds },
     }).lean();
 
-    // Map images to their respective properties
     const propertiesWithImages = properties.map((property) => {
       const matchedImages = images.find(
         (img) => img.propertyId.toString() === property._id.toString()
@@ -96,19 +99,27 @@ export const getSixPropertiesWithImages = async (req, res) => {
     res.status(200).json({ success: true, data: propertiesWithImages });
   } catch (error) {
     console.error('Error fetching properties with images:', error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    res.status(500).json({ success: false, message: 'Server Error', error: error.message });
   }
 };
 
+export const countProperty = async (req, res) => {
+  const { userId } = req.query; 
+	
+	
+  console.log('Received userId:', userId);// or req.params if passed in route params
 
-export const countProperty = async (req, res) =>{
   try {
-    const totalProperties = await Property.countDocuments();
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
+    const totalProperties = await Property.countDocuments({ userId });
     res.status(200).json({ total: totalProperties });
   } catch (error) {
-    res.status(500).json({ message: "Error counting properties", error: error.message });
+    res.status(500).json({ message: 'Error counting properties', error: error.message });
   }
-}
+};
 
 export const updatePropertyAddress = async (req, res) => {
 	try {

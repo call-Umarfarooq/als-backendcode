@@ -247,11 +247,21 @@ export const acceptContract = async (req, res) => {
 };
 
 
-export const  countSignd = async (req, res) => {
+export const countSignd = async (req, res) => {
+  const { userId } = req.query;
+
   try {
-    const acceptedContractsCount = await Contract.countDocuments({ status: "Accepted" });
+    if (!userId) {
+      return res.status(400).json({ message: 'userId is required' });
+    }
+
+    const acceptedContractsCount = await Contract.countDocuments({
+      userId,
+      status: 'Accepted',
+    });
+
     res.status(200).json({ totalAccepted: acceptedContractsCount });
   } catch (error) {
-    res.status(500).json({ message: "Error counting accepted contracts", error: error.message });
+    res.status(500).json({ message: 'Error counting accepted contracts', error: error.message });
   }
-}
+};

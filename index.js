@@ -93,7 +93,7 @@ app.use('/api/board', board);
 app.use('/api/team', team)
 app.use('/api/calender', calender)
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
