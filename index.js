@@ -43,7 +43,7 @@ const server = http.createServer(app);
 // Socket.io setup
 const io = new Server(server, {
 	cors: {
-		origin: "http://localhost:3000" , // Change this to your frontend URL
+		origin: "https://als-frontend-zysoftec.vercel.app" , // Change this to your frontend URL
 		methods: ['GET', 'POST'],
 	},
 });
