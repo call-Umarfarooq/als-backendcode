@@ -11,14 +11,14 @@ const agentsSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: function() { return this.status === 'ACTIVE'; }
+    required: function () { return this.status === 'ACTIVE'; }
   },
   title: {
     type: String
   },
   status: {
     type: String,
-    enum: ['INVITED', 'ACTIVE','REMOVED'],
+    enum: ['INVITED', 'ACTIVE', 'REMOVED'],
     default: 'INVITED'
   },
   role: {
@@ -41,6 +41,7 @@ const agentsSchema = new mongoose.Schema({
     ref: 'userAccounts',
     required: true
   },
+  properties: [],
   invitationToken: {
     type: String,
     sparse: true,

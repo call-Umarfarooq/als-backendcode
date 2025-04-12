@@ -1,6 +1,6 @@
 
 import express from 'express';
-import {createPropertyAddress ,createImages, createFloorPlan,createVideo, createOtherMedia, createFeature,getProperties ,deleteProperty ,updatePropertyAddress ,getFeatureByPropertyId,getPropertyImagesByPropertyId,deletePropertyImageByIndex ,getPropertyVideoByPropertyId ,deletePropertyVideoByIndex,getOtherMediaByPropertyId ,deleteOtherMediaByPropertyIdAndIndex ,getFloorPlanByPropertyId ,deleteFloorPlan ,countProperty} from '../controllers/property.js'
+import {createPropertyAddress ,createImages, createFloorPlan,createVideo, createOtherMedia, createFeature,getProperties ,deleteProperty ,updatePropertyAddress ,getFeatureByPropertyId,getPropertyImagesByPropertyId,deletePropertyImageByIndex ,getPropertyVideoByPropertyId ,deletePropertyVideoByIndex,getOtherMediaByPropertyId ,deleteOtherMediaByPropertyIdAndIndex ,getFloorPlanByPropertyId ,deleteFloorPlan ,countProperty ,getSixPropertiesWithImages} from '../controllers/property.js'
 const router = express.Router();
 
 router.post('/create-address', createPropertyAddress)
@@ -9,6 +9,9 @@ router.post('/create-images', createImages)
 router.get('/property-images/:propertyId', getPropertyImagesByPropertyId);
 router.delete('/property-images/delete', deletePropertyImageByIndex);
 router.get("/count" ,countProperty)
+
+router.get('/six-properties', getSixPropertiesWithImages);
+
 
 router.post('/create-floor-plain', createFloorPlan)
 router.get('/property-floor-plan/:propertyId', getFloorPlanByPropertyId);

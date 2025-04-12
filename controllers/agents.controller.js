@@ -164,13 +164,17 @@ export const acceptInvitation = async (req, res) => {
     const newUser = new User({
       email: savedAgent.email,
       password: hashedPassword,
-      agentId:savedAgent._id,
+      agentId: savedAgent._id,
       referBy: savedAgent.referBy, // Link to the user who invited
       role: 'user',
       userName: userName, // Ensure userName is not null
     });
 
     const savedUser = await newUser.save();
+
+    // update agent userId
+    savedAgent.userId = savedUser._id;
+    await savedAgent.save();
 
     return res.status(200).json({
       success: true,
@@ -280,6 +284,18 @@ export const createAgentsContacts = async (req, res) => {
 };
 
 
+export const getAgents = async (req, res) => {
+	try {
+		const agents = await Agents.find({}, 'name role title email') // Select specific fields
+			.limit(5)
+			.lean(); // Convert to plain JS objects for performance
+
+		res.status(200).json({ agents });
+	} catch (error) {
+		console.error('Failed to fetch agents:', error);
+		res.status(500).json({ message: 'Server error while fetching agents' });
+	}
+};
 
 export const getAllAgents = async (req, res) => {
   try {

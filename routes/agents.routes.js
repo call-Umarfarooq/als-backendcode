@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-import { acceptInvitation, createAgents, createAgentsContacts, getAgentById, getAllAgents, removeAgent, resendInvitation ,getAgentByReferId, getAllActiveAgent ,agentCount} from '../controllers/agents.controller.js';
+import { acceptInvitation, createAgents, createAgentsContacts, getAgentById, getAllAgents, removeAgent, resendInvitation ,getAgentByReferId, getAllActiveAgent ,agentCount ,getAgents} from '../controllers/agents.controller.js';
 
 
 router.post('/create-agents', createAgents);
@@ -13,5 +13,6 @@ router.get('/get-agent/:id', getAgentById);
 router.get('/get-agents/:referBy', getAgentByReferId);
 router.get('/remove-agent/:id', removeAgent);
 router.post('/create-contacts', createAgentsContacts);
+router.get('/five-agents', getAgents);
 
 export default router;

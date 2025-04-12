@@ -66,6 +66,41 @@ export const createPropertyAddress = async (req, res) => {
 	}
 };
 
+
+export const getSixPropertiesWithImages = async (req, res) => {
+  try {
+    const properties = await Property.find()
+      .sort({ createdAt: -1 }) // latest first
+      .limit(6)
+      .lean(); // optional: returns plain JS objects
+
+    // Get all property IDs
+    const propertyIds = properties.map((property) => property._id);
+
+    // Get corresponding images
+    const images = await PropertyImage.find({
+      propertyId: { $in: propertyIds },
+    }).lean();
+
+    // Map images to their respective properties
+    const propertiesWithImages = properties.map((property) => {
+      const matchedImages = images.find(
+        (img) => img.propertyId.toString() === property._id.toString()
+      );
+      return {
+        ...property,
+        propertyImages: matchedImages?.propertyImages || [],
+      };
+    });
+
+    res.status(200).json({ success: true, data: propertiesWithImages });
+  } catch (error) {
+    console.error('Error fetching properties with images:', error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+
 export const countProperty = async (req, res) =>{
   try {
     const totalProperties = await Property.countDocuments();

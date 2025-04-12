@@ -1,10 +1,11 @@
 import express from 'express';
-import { createTeam, deleteTeam, getTeamById, getTeamsByOwner, removeAgentFromTeam, updateTeam ,countTeam } from '../controllers/team.controller.js';
+import { createTeam, deleteTeam, getTeamById, getTeamsByOwner, removeAgentFromTeam, updateTeam ,countTeam ,summary} from '../controllers/team.controller.js';
 const router = express.Router();
 
 
 router.post('/create-team', createTeam);
 router.get("/count",countTeam)
+router.get('/summary',summary)
 router.get('/all-teams/:ownerId', getTeamsByOwner);
 router.get('/team-byId/:id', getTeamById);
 router.delete('/delete-team/:id', deleteTeam);

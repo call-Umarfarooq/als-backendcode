@@ -126,6 +126,27 @@ export const countTeam =async (req, res) =>{
       res.status(500).json({ message: "Error counting teams", error: error.message });
     }
   }
+
+  export const summary =async (req, res) =>{
+    try {
+      const teams = await Teams.find({},{
+        'basicInfo.name': 1,
+        'basicInfo.city': 1,
+        agents: 1
+      });
+  
+      const response = teams.map(team => ({
+        name: team.basicInfo?.name || 'Unnamed Team',
+        city: team.basicInfo?.city || 'Unknown City',
+        agentCount: team.agents.length
+      }));
+  
+      res.status(200).json(response);
+    } catch (err) {
+      console.error('Error fetching team summary:', err);
+      res.status(500).json({ error: 'Server Error' });
+    }
+  }
 // Get Team by ID
 export const getTeamById = async (req, res) => {
     try {

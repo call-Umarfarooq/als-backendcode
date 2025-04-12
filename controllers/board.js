@@ -41,12 +41,44 @@ export const getMessages = async (req, res) => {
 };
 
 
+// export const getAllBoardMessages = async (req, res) => {
+//   try {
+//     const messages = await Board.find()
+//       .sort({ createdAt: 1 }) // most recent first
+//       .populate('sender', 'firstName profileImage role') // populate sender details
+      
+
+//     const formatted = messages.map(msg => ({
+//       _id: msg._id,
+//       content: msg.content,
+//       createdAt: msg.createdAt,
+//       sender: {
+//         _id: msg.sender._id,
+//         name: msg.sender.firstName,
+//         profileImage: msg.sender.profileImage,
+//         role: msg.sender.role,
+//       },
+      
+//     }));
+
+//     res.status(200).json({ success: true, data: formatted });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: 'Error getting board messages', error });
+//   }
+// };
+
 export const getAllBoardMessages = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
+
+    const totalMessages = await Board.countDocuments();
     const messages = await Board.find()
-      .sort({ createdAt: 1 }) // most recent first
-      .populate('sender', 'firstName profileImage role') // populate sender details
-      
+      .sort({ createdAt: -1 }) // Newest first
+      .skip(skip)
+      .limit(limit)
+      .populate('sender', 'firstName profileImage role');
 
     const formatted = messages.map(msg => ({
       _id: msg._id,
@@ -58,10 +90,15 @@ export const getAllBoardMessages = async (req, res) => {
         profileImage: msg.sender.profileImage,
         role: msg.sender.role,
       },
-      
     }));
 
-    res.status(200).json({ success: true, data: formatted });
+    res.status(200).json({ 
+      success: true, 
+      data: formatted,
+      currentPage: page,
+      totalPages: Math.ceil(totalMessages / limit),
+      hasMore: skip + limit < totalMessages
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error getting board messages', error });
   }
