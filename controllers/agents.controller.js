@@ -289,6 +289,29 @@ export const createAgentsContacts = async (req, res) => {
   }
 };
 
+export const getID = async (req, res) => {
+	try {
+		const { email } = req.query;
+
+		if (!email) {
+			return res.status(400).json({ message: 'Email is required' });
+		}
+
+		const agent = await Agents.findOne({ email });
+
+		if (!agent) {
+			return res.status(404).json({ message: 'Agent not found' });
+		}
+
+		// Return full agent object
+		return res.status(200).json(agent);
+	} catch (error) {
+		console.error('Error finding agent by email:', error);
+		return res.status(500).json({ message: 'Server error' });
+	}
+};
+
+
 
 export const getAgents = async (req, res) => {
   const { userId } = req.query;

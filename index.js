@@ -15,6 +15,7 @@ import contracts from './routes/contracts.js';
 import board from './routes/board.js';
 import team from './routes/team.routes.js'
 import Board from './models/boardModel.js';
+import Chat from './routes/chat.js';
 import calender from './routes/calender.js'
 dotenv.config();
 const app = express();
@@ -47,6 +48,12 @@ const io = new Server(server, {
 		methods: ['GET', 'POST'],
 	},
 });
+// const io = new Server(server, {
+// 	cors: {
+// 		origin: "http://localhost:3000" , // Change this to your frontend URL
+// 		methods: ['GET', 'POST'],
+// 	},
+// });
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
@@ -92,6 +99,7 @@ app.use('/api/contracts', contracts);
 app.use('/api/board', board);
 app.use('/api/team', team)
 app.use('/api/calender', calender)
+app.use('/api/chat', Chat)
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
